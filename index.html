@@ -6,131 +6,88 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="C Studio">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0b1220">
+<meta name="theme-color" content="#000000">
 <title>C Studio</title>
 <style>
-:root{
-  --bg:#0b1220;--bg2:#101a2c;--card:#131f35;--line:#22324d;--tx:#e8eefb;--mut:#8a9bb8;
-  --acc:#5b9dff;--acc2:#8b7bff;--ok:#34d399;--err:#ff6b81;--warn:#fbbf24;
-  --k:#c792ea;--t:#5ccfe6;--s:#a5e075;--n:#ffb86c;--c:#6b7d99;--p:#ff7eb6;--f:#82aaff;
-  --shadow:0 10px 30px rgba(0,0,0,.35);--fs:14px;
-}
-:root[data-theme=light]{
-  --bg:#f3f6fc;--bg2:#e9eef8;--card:#ffffff;--line:#d6deee;--tx:#14213d;--mut:#5d6f8f;
-  --acc:#2563eb;--acc2:#7c3aed;--ok:#059669;--err:#dc2638;--warn:#b7791f;
-  --k:#8e44ad;--t:#0e7490;--s:#2f7d32;--n:#c2410c;--c:#8090a8;--p:#be185d;--f:#1d4ed8;
-  --shadow:0 8px 24px rgba(30,50,90,.12);
-}
+:root{--gris:#c0c0c0;--sombra:#808080;--osc:#404040;--azul:#0000a8;--azul2:#000070;
+  --cian:#55ffff;--amar:#ffff55;--verde:#55ff55;--rojo:#ff5555;--mag:#ff77ff;--fs:14px;
+  --mono:"Menlo","SF Mono","Courier New",monospace}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-text-size-adjust:100%}
-body{background:radial-gradient(900px 500px at 10% -10%,color-mix(in srgb,var(--acc) 18%,transparent),transparent 60%),
- radial-gradient(800px 500px at 100% 0,color-mix(in srgb,var(--acc2) 14%,transparent),transparent 60%),var(--bg);
- background-attachment:fixed}
-#app{max-width:980px;margin:auto;min-height:100%;display:flex;flex-direction:column;
-  padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 96px)}
-button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
-.top{display:flex;align-items:center;gap:10px;padding:6px 2px 12px}
-.logo{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font:800 19px ui-monospace,Menlo,monospace;
-  color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 16px color-mix(in srgb,var(--acc) 40%,transparent)}
-.brand{flex:1;min-width:0}
-.brand b{display:block;font-size:18px;letter-spacing:.2px}
-.brand span{font-size:12px;color:var(--mut)}
-.ib{width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;font-size:18px}
-.ib:active{transform:scale(.94)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
-.filebar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--card) 70%,var(--bg2))}
-.filebar .nm{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.filebar .nm small{color:var(--mut);font-weight:400;margin-left:6px}
-.chip{font-size:12px;color:var(--mut);padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
-.chip:active{background:var(--bg2)}
+html,body{margin:0;height:100%;background:#000;color:#fff;font-family:var(--mono);-webkit-text-size-adjust:100%}
+#app{max-width:860px;margin:auto;min-height:100%;display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 118px)}
+button{font:inherit;color:#000;cursor:pointer;border-radius:0}
+.bv{background:var(--gris);border:2px solid;border-color:#fff var(--osc) var(--osc) #fff;padding:9px 10px;font-weight:700;font-size:14px;color:#000}
+.bv:active{border-color:var(--osc) #fff #fff var(--osc);padding:10px 9px 8px 11px}
+.bv:disabled{color:var(--sombra)}
+/* barra de título y reloj */
+.titulo{background:var(--gris);color:#000;display:flex;justify-content:space-between;align-items:center;padding:5px 10px;
+  border-bottom:2px solid var(--sombra);font-weight:700;font-size:14px}
+.reloj{background:#000;border-bottom:2px solid var(--sombra);padding:7px 10px;font-size:13px;line-height:1.55}
+.reloj .h{color:var(--verde);font-size:20px;letter-spacing:1px;font-weight:700}
+.reloj .f{color:var(--gris);margin-left:8px;text-transform:uppercase;font-size:12px}
+.reloj .v{color:var(--amar);display:block}
 /* editor */
-.ed{position:relative;display:flex;max-height:52vh;min-height:230px;overflow:auto;background:var(--card);overscroll-behavior:contain}
-.gut{position:sticky;left:0;z-index:2;flex:none;padding:12px 8px 12px 12px;text-align:right;color:var(--mut);
-  font:var(--fs)/1.55 ui-monospace,"SF Mono",Menlo,monospace;background:color-mix(in srgb,var(--card) 80%,var(--bg2));
-  border-right:1px solid var(--line);user-select:none;white-space:pre}
-.gut .bad{color:var(--err);font-weight:700}
+.frame{position:relative;margin:20px 8px 0;border:4px double #fff;background:var(--azul)}
+.frame .tit{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--azul);color:#fff;padding:0 8px;font-weight:700;font-size:13px;white-space:nowrap}
+.ed{position:relative;display:flex;max-height:50vh;min-height:260px;overflow:auto;overscroll-behavior:contain}
+.gut{position:sticky;left:0;z-index:2;flex:none;padding:12px 8px 12px 8px;text-align:right;color:#8a8aff;background:var(--azul2);
+  font:var(--fs)/1.5 var(--mono);white-space:pre;user-select:none;border-right:1px solid #5555cc}
+.gut .bad{color:#fff;background:#aa0000}
 .stack{position:relative;flex:1;min-width:max-content}
-pre.hl,textarea#code{margin:0;padding:12px 16px 12px 12px;font:var(--fs)/1.55 ui-monospace,"SF Mono",Menlo,monospace;
-  white-space:pre;tab-size:4;letter-spacing:0;word-spacing:0}
-pre.hl{pointer-events:none;color:var(--tx);min-height:100%}
+pre.hl,textarea#code{margin:0;padding:12px 14px;font:var(--fs)/1.5 var(--mono);white-space:pre;tab-size:4}
+pre.hl{pointer-events:none;color:var(--amar);min-height:100%}
 textarea#code{position:absolute;inset:0;width:100%;height:100%;border:0;outline:0;resize:none;overflow:hidden;
-  background:transparent;color:transparent;caret-color:var(--acc);-webkit-text-fill-color:transparent}
-textarea#code::selection{background:color-mix(in srgb,var(--acc) 35%,transparent);-webkit-text-fill-color:transparent}
-.k{color:var(--k);font-weight:600}.t{color:var(--t)}.s{color:var(--s)}.n{color:var(--n)}.c{color:var(--c);font-style:italic}.p{color:var(--p)}.f{color:var(--f)}
-.keys{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;border-top:1px solid var(--line);scrollbar-width:none}
+  background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:#fff}
+textarea#code::selection{background:rgba(255,255,255,.3);-webkit-text-fill-color:transparent}
+.k{color:#fff;font-weight:700}.t{color:var(--cian)}.s{color:var(--verde)}.n{color:var(--mag)}.c{color:#9a9aff}.p{color:#ffaa55}.f{color:var(--amar)}
+.keys{display:flex;gap:4px;overflow-x:auto;padding:6px;background:var(--gris);border-top:2px solid #fff;scrollbar-width:none}
 .keys::-webkit-scrollbar{display:none}
-.keys button{flex:none;min-width:38px;padding:8px 10px;border-radius:10px;background:var(--bg2);border:1px solid var(--line);
-  font:600 15px ui-monospace,Menlo,monospace}
-.keys button:active{background:var(--acc);color:#fff}
-/* io */
-.tabs{display:flex;gap:4px;padding:6px;margin-top:14px;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
-.tabs button{flex:1;padding:9px;border-radius:10px;color:var(--mut);font-weight:600;font-size:14px}
-.tabs button.on{background:var(--card);color:var(--tx);box-shadow:0 2px 8px rgba(0,0,0,.18)}
-.panel{margin-top:10px}
-.status{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:600;font-size:14px}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--mut)}
-.status.ok .dot{background:var(--ok)}.status.ok{color:var(--ok)}
-.status.err .dot{background:var(--err)}.status.err{color:var(--err)}
-.status.run .dot{background:var(--warn);animation:pl 1s infinite}.status.run{color:var(--warn)}
-.status em{margin-left:auto;font-style:normal;font-weight:400;color:var(--mut);font-size:12px}
-@keyframes pl{50%{opacity:.25}}
-pre.out{margin:0;padding:14px;font:13.5px/1.55 ui-monospace,"SF Mono",Menlo,monospace;white-space:pre-wrap;word-break:break-word;min-height:120px;max-height:40vh;overflow:auto}
-pre.out .e{color:var(--err)} pre.out .m{color:var(--mut)}
-pre.out a{color:var(--acc);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-textarea#stdin{display:block;width:100%;min-height:120px;border:0;outline:0;resize:vertical;background:transparent;color:var(--tx);
-  padding:14px;font:14px/1.55 ui-monospace,Menlo,monospace}
-.hint{padding:0 14px 12px;color:var(--mut);font-size:12px}
-/* run bar */
-.runbar{position:fixed;left:0;right:0;bottom:0;padding:12px 14px calc(env(safe-area-inset-bottom) + 12px);
-  background:linear-gradient(to top,var(--bg) 55%,transparent);pointer-events:none}
-.runbar>div{max-width:980px;margin:auto;display:flex;gap:10px;pointer-events:auto}
-#run{flex:1;padding:16px;border-radius:16px;font-weight:800;font-size:17px;color:#fff;letter-spacing:.2px;
-  background:linear-gradient(135deg,var(--ok),#10b981 40%,#0ea5a4);box-shadow:0 10px 24px rgba(16,185,129,.35)}
-#run:active{transform:scale(.985)}#run:disabled{filter:grayscale(.5);opacity:.75}
-/* drawer */
-.sheet{position:fixed;inset:0;z-index:20;display:none}
-.sheet.on{display:block}
-.sheet .bg{position:absolute;inset:0;background:rgba(3,8,20,.55);backdrop-filter:blur(3px)}
-.sheet .body{position:absolute;left:0;right:0;bottom:0;max-width:640px;margin:auto;max-height:82vh;overflow:auto;
-  background:var(--card);border:1px solid var(--line);border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom) + 16px);
-  animation:up .22s ease-out}
-@keyframes up{from{transform:translateY(30px);opacity:0}}
-.sheet h3{margin:6px 4px 12px;font-size:18px;display:flex;align-items:center;gap:8px}
-.sheet h3 button{margin-left:auto;font-size:14px;color:var(--acc);font-weight:600}
-.row{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;border:1px solid var(--line);margin-bottom:8px;background:var(--bg2)}
-.row.cur{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,var(--bg2))}
-.row .i{flex:1;min-width:0}.row b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row small{color:var(--mut)}
-.row .x{color:var(--err);padding:6px 10px;font-size:13px;font-weight:600}
-.act{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
-.act button{padding:13px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);font-weight:600;font-size:14px}
-.act button.pri{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:0}
-.act button:active{transform:scale(.97)}
-.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 92px);transform:translateX(-50%);z-index:30;
-  background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:.25s;pointer-events:none}
-.toast.on{opacity:1}
-.row .mini{padding:7px 9px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:13px;font-weight:600}
-.row .mini.d{color:var(--err)}
-.row2{display:flex;gap:8px;margin:12px 0 4px}
+.keys button{flex:none;min-width:36px;padding:7px 6px;font-size:15px}
+/* barra inferior */
+.barra{position:fixed;left:0;right:0;bottom:0;background:var(--gris);border-top:2px solid #fff;padding:8px 8px calc(env(safe-area-inset-bottom) + 8px)}
+.barra>div{max-width:860px;margin:auto;display:flex;gap:6px}
+.barra .bv{flex:1;padding:13px 4px}
+.barra #run{flex:1.7;background:#00a800;color:#fff;font-size:15px}
+.barra small{display:block;font-size:10px;font-weight:400;opacity:.85}
+/* ventanas */
+.vel{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);padding:calc(env(safe-area-inset-top) + 16px) 10px calc(env(safe-area-inset-bottom) + 14px)}
+.vel.on{display:flex;flex-direction:column;justify-content:center}
+.win{margin:auto;width:100%;max-width:620px;max-height:100%;display:flex;flex-direction:column;background:var(--gris);color:#000;
+  border:4px double #fff;box-shadow:6px 6px 0 #000}
+.win .bar{background:var(--azul);color:#fff;padding:5px 10px;font-weight:700;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.win .bar button{background:var(--gris);border:2px solid;border-color:#fff var(--osc) var(--osc) #fff;padding:1px 9px;font-weight:700}
+.win .cu{overflow:auto;padding:10px;flex:1}
+.win .pie{padding:8px 10px;border-top:2px solid var(--sombra);font-size:13px}
+.it{display:flex;align-items:center;gap:8px;padding:10px 8px;border:1px solid var(--sombra);background:#fff;margin-bottom:6px;color:#000}
+.it.cur{background:var(--azul);color:#fff}
+.it .i{flex:1;min-width:0;cursor:pointer}.it b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.it small{opacity:.7;font-size:12px}
+.it .bv{padding:5px 8px;font-size:12px}
+.menu .it{cursor:pointer;margin-bottom:4px}
+.menu .it:active{background:var(--azul);color:#fff}
+.menu h4{margin:10px 0 6px;font-size:12px;text-transform:uppercase;color:var(--osc)}
+/* salida */
+.dos{background:#000;border-color:var(--gris)}
+.dos .bar{background:var(--gris);color:#000}
+.dos .cu{background:#000;color:var(--gris);padding:12px;font:14px/1.5 var(--mono);white-space:pre-wrap;word-break:break-word;min-height:150px}
+.dos .e{color:var(--rojo)} .dos a{color:var(--cian);text-decoration:underline}
+.dos .pie{background:#000;color:var(--gris);border-top:1px solid var(--sombra);display:flex;gap:10px;align-items:center;justify-content:space-between}
+.est.ok{color:var(--verde)}.est.er{color:var(--rojo)}.est.ru{color:var(--amar)}
+.aviso{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 90px);transform:translateX(-50%);z-index:40;background:#000;color:#fff;
+  border:2px solid #fff;padding:8px 14px;font-size:13px;display:none}
+.aviso.on{display:block}
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="top">
-    <div class="logo">C</div>
-    <div class="brand"><b>C Studio</b><span id="sub">Compilador de C · gcc real</span></div>
-    <button class="ib" id="bTema" title="Tema">🌙</button>
-    <button class="ib" id="bMenu" title="Mis programas">📁</button>
+  <div class="titulo"><span>C STUDIO</span><span id="nombre">programa1.c</span></div>
+  <div class="reloj">
+    <span class="h" id="hora">--:--:--</span><span class="f" id="fecha"></span>
+    <span class="v" id="cuenta"></span>
   </div>
-
-  <div class="card">
-    <div class="filebar">
-      <div class="nm" id="nombre">programa.c</div>
-      <button class="chip" id="bSave">💾 Guardar</button>
-      <button class="chip" id="bA-">A−</button>
-      <button class="chip" id="bA+">A+</button>
-    </div>
+  <div class="frame">
+    <div class="tit" id="tit">programa1.c</div>
     <div class="ed" id="ed">
       <div class="gut" id="gut">1</div>
       <div class="stack">
@@ -140,67 +97,31 @@ textarea#stdin{display:block;width:100%;min-height:120px;border:0;outline:0;resi
     </div>
     <div class="keys" id="keys"></div>
   </div>
-
-  <div class="tabs" id="tabs">
-    <button class="on" data-t="out">Salida</button>
-    <button data-t="in">Entrada (scanf)</button>
-  </div>
-  <div class="card panel" id="pOut">
-    <div class="status" id="st"><span class="dot"></span><span id="stt">Listo</span><em id="stm"></em></div>
-    <pre class="out" id="out"><span class="m">Pulsa «Compilar y ejecutar» para ver el resultado aquí.</span></pre>
-  </div>
-  <div class="card panel" id="pIn" style="display:none">
-    <textarea id="stdin" spellcheck="false" placeholder="Escribe aquí los datos que leerá scanf, uno por línea o separados por espacios.&#10;Ejemplo:&#10;3 4"></textarea>
-    <div class="hint">Estos datos se guardan con el programa.</div>
-  </div>
 </div>
 
-<div class="runbar"><div><button id="run">▶ Compilar y ejecutar</button></div></div>
+<div class="barra"><div>
+  <button class="bv" id="bMenu">Menú</button>
+  <button class="bv" id="bSave">Guardar</button>
+  <button class="bv" id="bGua">Guardados</button>
+  <button class="bv" id="run">Ejecutar<small>compilar y correr</small></button>
+</div></div>
 
-<div class="sheet" id="sheet">
-  <div class="bg" id="sbg"></div>
-  <div class="body">
-    <h3>Mis programas <button id="sClose">Cerrar</button></h3>
-    <div id="lista"></div>
-    <div class="act">
-      <button class="pri" id="aNuevo">＋ Nuevo programa</button>
-      <button id="aEj">📚 Ejemplos</button>
-      <button id="aGua">🗂 Archivos guardados</button>
-      <button id="aRen">✏️ Renombrar</button>
-      <button id="aDup">⧉ Duplicar</button>
-      <button id="aExp">⬇︎ Exportar .c</button>
-      <button id="aImp">⬆︎ Importar .c</button>
-      <button id="aCopy">📋 Copiar código</button>
-      <button id="aFmt">✨ Sangrar código</button>
-    </div>
-    <input type="file" id="file" accept=".c,.h,.txt,text/plain" hidden>
-  </div>
-</div>
+<!-- salida: solo aparece al ejecutar -->
+<div class="vel" id="vSal"><div class="win dos">
+  <div class="bar"><span>Salida</span><button id="sCerrar">Cerrar</button></div>
+  <div class="cu" id="out"></div>
+  <div class="pie"><span class="est" id="est"></span><span id="ms"></span></div>
+</div></div>
 
-<div class="sheet" id="sheetEj">
-  <div class="bg" id="ejbg"></div>
-  <div class="body">
-    <h3>Ejemplos <button id="ejClose">Cerrar</button></h3>
-    <div id="ejl"></div>
-  </div>
-</div>
-<div class="sheet" id="sheetG">
-  <div class="bg" id="gbg"></div>
-  <div class="body">
-    <h3>Archivos guardados <button id="gClose">Cerrar</button></h3>
-    <p style="margin:0 4px 12px;color:var(--mut);font-size:13px">Copias que guardas tú con 💾. Ábrelas para seguir trabajando, expórtalas como .c o impórtalas desde tus archivos.</p>
-    <div id="glista"></div>
-    <div class="act">
-      <button class="pri" id="gGuardar">💾 Guardar el actual</button>
-      <button id="gImp">⬆︎ Importar .c</button>
-      <button id="gBak">⬇︎ Copia de todo</button>
-      <button id="gRes">♻︎ Restaurar copia</button>
-    </div>
-    <input type="file" id="fileG" accept=".c,.h,.txt,text/plain" multiple hidden>
-    <input type="file" id="fileB" accept=".json,application/json" hidden>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
+<!-- ventana general -->
+<div class="vel" id="vDlg"><div class="win">
+  <div class="bar"><span id="dT"></span><button id="dX">Cerrar</button></div>
+  <div class="cu" id="dC"></div>
+  <div class="pie" id="dP" style="display:none"></div>
+</div></div>
+<div class="aviso" id="aviso"></div>
+<input type="file" id="fImp" accept=".c,.h,.txt,text/plain" multiple hidden>
+<input type="file" id="fRes" accept=".json,application/json" hidden>
 
 <script>
 const EJ={
@@ -211,16 +132,14 @@ int main(void) {
     return 0;
 }
 `,
-"Suma de dos números (scanf)":{stdin:"3 4",code:`#include <stdio.h>
+"Suma de dos números":`#include <stdio.h>
 
 int main(void) {
-    int a, b;
-    printf("Escribe dos números: ");
-    scanf("%d %d", &a, &b);
-    printf("La suma es %d\\n", a + b);
+    int a = 3, b = 4;
+    printf("%d + %d = %d\\n", a, b, a + b);
     return 0;
 }
-`},
+`,
 "Bucle for: tabla del 5":`#include <stdio.h>
 
 int main(void) {
@@ -230,33 +149,30 @@ int main(void) {
     return 0;
 }
 `,
-"if / else: par o impar":{stdin:"7",code:`#include <stdio.h>
+"if / else: par o impar":`#include <stdio.h>
 
 int main(void) {
-    int n;
-    printf("Número: ");
-    scanf("%d", &n);
-    if (n % 2 == 0) {
-        printf("%d es par\\n", n);
-    } else {
-        printf("%d es impar\\n", n);
+    for (int n = 1; n <= 6; n++) {
+        if (n % 2 == 0) {
+            printf("%d es par\\n", n);
+        } else {
+            printf("%d es impar\\n", n);
+        }
     }
     return 0;
 }
-`},
-"while: suma hasta 0":{stdin:"5 10 20 0",code:`#include <stdio.h>
+`,
+"while: potencias de 2":`#include <stdio.h>
 
 int main(void) {
-    int x, suma = 0;
-    scanf("%d", &x);
-    while (x != 0) {
-        suma += x;
-        scanf("%d", &x);
+    int x = 1;
+    while (x < 200) {
+        printf("%d\\n", x);
+        x *= 2;
     }
-    printf("Suma total: %d\\n", suma);
     return 0;
 }
-`},
+`,
 "Array: media y máximo":`#include <stdio.h>
 
 int main(void) {
@@ -322,35 +238,47 @@ int main(void) {
     return 0;
 }
 `};
+const PLANTILLA=`#include <stdio.h>
 
+int main(void) {
+    
+    return 0;
+}
+`;
 const $=id=>document.getElementById(id);
 const safe=f=>{try{return f()}catch(e){return null}};
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const KEY='cstudio.v2';
 let S=safe(()=>JSON.parse(localStorage.getItem(KEY)))||null;
-function uid(){return Math.random().toString(36).slice(2,9)}
+const uid=()=>Math.random().toString(36).slice(2,9);
 if(!S||!S.files||!S.files.length){
-  const old=safe(()=>localStorage.getItem('cstudio.code'));
-  const oldin=safe(()=>localStorage.getItem('cstudio.stdin'))||'';
-  const f={id:uid(),name:'programa1.c',code:old||(typeof EJ["Hola mundo"]==='string'?EJ["Hola mundo"]:''),stdin:oldin,t:Date.now()};
-  S={files:[f],cur:f.id,theme:'dark',fs:14};
+  const f={id:uid(),name:'programa1.c',code:safe(()=>localStorage.getItem('cstudio.code'))||EJ["Hola mundo"],t:Date.now()};
+  S={files:[f],cur:f.id,fs:14};
 }
-S.saved=S.saved||[];
-function save(){safe(()=>localStorage.setItem(KEY,JSON.stringify(S)))}
+S.saved=S.saved||[];S.fs=S.fs||14;
+const save=()=>safe(()=>localStorage.setItem(KEY,JSON.stringify(S)));
 const cur=()=>S.files.find(f=>f.id===S.cur)||S.files[0];
 
-/* tema y tamaño */
-function aplicarTema(){document.documentElement.dataset.theme=S.theme;$('bTema').textContent=S.theme==='dark'?'☀️':'🌙';
-  document.querySelector('meta[name=theme-color]').content=S.theme==='dark'?'#0b1220':'#f3f6fc'}
-function aplicarFs(){document.documentElement.style.setProperty('--fs',S.fs+'px');render()}
-$('bTema').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';aplicarTema();save()};
-$('bA-').onclick=()=>{S.fs=Math.max(11,S.fs-1);aplicarFs();save()};
-$('bA+').onclick=()=>{S.fs=Math.min(22,S.fs+1);aplicarFs();save()};
+/* reloj y cuenta atrás al viernes */
+const p2=n=>String(n).padStart(2,'0');
+function tic(){
+  const n=new Date();
+  $('hora').textContent=p2(n.getHours())+':'+p2(n.getMinutes())+':'+p2(n.getSeconds());
+  $('fecha').textContent=n.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).replace('.','');
+  const dif=(5-n.getDay()+7)%7;
+  if(dif===0){$('cuenta').textContent='¡HOY ES VIERNES!';return}
+  const objetivo=new Date(n.getFullYear(),n.getMonth(),n.getDate()+dif,0,0,0);
+  const ms=objetivo-n,d=Math.floor(ms/864e5),r=ms-d*864e5;
+  const h=Math.floor(r/36e5),m=Math.floor(r%36e5/6e4),s=Math.floor(r%6e4/1e3);
+  const dia=objetivo.toLocaleDateString('es-ES',{day:'numeric',month:'short'}).replace('.','');
+  $('cuenta').textContent='VIERNES '+dia+' · faltan '+d+(d===1?' día ':' días ')+p2(h)+':'+p2(m)+':'+p2(s);
+}
+tic();setInterval(tic,1000);
 
 /* resaltado */
 const KW=new Set("auto break case const continue default do else enum extern for goto if inline register restrict return sizeof static struct switch typedef union volatile while".split(' '));
 const TY=new Set("int char float double void long short signed unsigned size_t FILE bool NULL EOF true false uint8_t uint16_t uint32_t uint64_t int8_t int16_t int32_t int64_t".split(' '));
 const RX=/(\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*)|(^[ \t]*#[^\n]*)|("(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?)|(\b0[xX][0-9a-fA-F]+\b|\b\d+\.?\d*(?:[eE][+-]?\d+)?[fFuUlL]*\b)|([A-Za-z_]\w*)(\s*\()?/gm;
-const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 function resaltar(src){
   let o='',i=0,m;RX.lastIndex=0;
   while((m=RX.exec(src))){
@@ -359,13 +287,11 @@ function resaltar(src){
     else if(m[2]!==undefined)o+='<span class="p">'+esc(m[2])+'</span>';
     else if(m[3]!==undefined)o+='<span class="s">'+esc(m[3])+'</span>';
     else if(m[4]!==undefined)o+='<span class="n">'+esc(m[4])+'</span>';
-    else{
-      const w=m[5];
+    else{const w=m[5];
       if(KW.has(w))o+='<span class="k">'+w+'</span>'+(m[6]||'');
       else if(TY.has(w))o+='<span class="t">'+w+'</span>'+(m[6]||'');
       else if(m[6])o+='<span class="f">'+w+'</span>'+m[6];
-      else o+=w;
-    }
+      else o+=w}
     if(m[0]==='')RX.lastIndex++;
   }
   return o+esc(src.slice(i));
@@ -373,117 +299,151 @@ function resaltar(src){
 let malas=new Set();
 const code=$('code');
 function render(){
-  const c=code.value;
-  $('hl').innerHTML=resaltar(c)+'\n ';
-  const n=c.split('\n').length;
-  let g='';for(let i=1;i<=n;i++)g+=(malas.has(i)?'<span class="bad">'+i+'</span>':i)+'\n';
+  const c=code.value;$('hl').innerHTML=resaltar(c)+'\n ';
+  const n=c.split('\n').length;let g='';
+  for(let i=1;i<=n;i++)g+=(malas.has(i)?'<span class="bad">'+i+'</span>':i)+'\n';
   $('gut').innerHTML=g.replace(/\n$/,'');
 }
 code.addEventListener('input',()=>{cur().code=code.value;cur().t=Date.now();malas.clear();render();save()});
-/* sangría automática */
+function ins(t){const a=code.selectionStart,b=code.selectionEnd;code.setRangeText(t,a,b,'end');code.dispatchEvent(new Event('input'));code.focus()}
 code.addEventListener('keydown',e=>{
   if(e.key==='Tab'){e.preventDefault();ins('    ')}
   if(e.key==='Enter'){
-    const a=code.selectionStart,v=code.value,ini=v.lastIndexOf('\n',a-1)+1;
-    const ln=v.slice(ini,a);let ind=(ln.match(/^\s*/)||[''])[0];
-    if(/\{\s*$/.test(ln))ind+='    ';
+    const a=code.selectionStart,v=code.value,ini=v.lastIndexOf('\n',a-1)+1,ln=v.slice(ini,a);
+    let ind=(ln.match(/^\s*/)||[''])[0];if(/\{\s*$/.test(ln))ind+='    ';
     e.preventDefault();ins('\n'+ind);
   }
 });
-function ins(t){const a=code.selectionStart,b=code.selectionEnd;code.setRangeText(t,a,b,'end');
-  code.dispatchEvent(new Event('input'));code.focus()}
-/* teclas rápidas */
-const TECLAS=[['⇥','    '],['{','{'],['}','}'],['(','('],[')',')'],['[','['],[']',']'],[';',';'],['"','"'],["'","'"],['&','&'],['*','*'],['%','%'],['<','<'],['>','>'],['=','='],['!','!'],['\\n','\\n'],['#','#']];
-$('keys').innerHTML=TECLAS.map((k,i)=>`<button data-i="${i}">${k[0]==='\\n'?'\\n':k[0]}</button>`).join('');
-$('keys').addEventListener('pointerdown',e=>{
-  const b=e.target.closest('button');if(!b)return;e.preventDefault();ins(TECLAS[b.dataset.i][1]);
-});
+const TECLAS=['    ','{','}','(',')','[',']',';','"',"'",'&','*','%','<','>','=','!','#','\\n'];
+$('keys').innerHTML=TECLAS.map((k,i)=>`<button class="bv" data-i="${i}">${k==='    '?'Tab':k==='\\n'?'\\n':k}</button>`).join('');
+$('keys').addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();ins(TECLAS[b.dataset.i])});
 
-/* cargar programa actual */
-function cargar(){
-  const f=cur();S.cur=f.id;code.value=f.code;$('stdin').value=f.stdin||'';
-  $('nombre').innerHTML=esc(f.name);malas.clear();render();save();
+function cargar(){const f=cur();S.cur=f.id;code.value=f.code;
+  $('nombre').textContent=f.name;$('tit').textContent=f.name;malas.clear();render();save()}
+function aplicarFs(){document.documentElement.style.setProperty('--fs',S.fs+'px');render()}
+
+let at;function aviso(t){const e=$('aviso');e.textContent=t;e.classList.add('on');clearTimeout(at);at=setTimeout(()=>e.classList.remove('on'),1800)}
+
+/* ventana general */
+let dClick=null;
+function dlg(titulo,html,click,pie){
+  $('dT').textContent=titulo;$('dC').innerHTML=html;dClick=click;
+  const p=$('dP');if(pie){p.style.display='';p.innerHTML=pie}else p.style.display='none';
+  $('vDlg').classList.add('on');
 }
-$('stdin').addEventListener('input',()=>{cur().stdin=$('stdin').value;save()});
+const cerrarDlg=()=>$('vDlg').classList.remove('on');
+$('dX').onclick=cerrarDlg;
+$('dC').addEventListener('click',e=>{if(dClick)dClick(e)});
+$('dP').addEventListener('click',e=>{if(dClick)dClick(e)});
 
-/* pestañas */
-$('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
-  [...$('tabs').children].forEach(x=>x.classList.toggle('on',x===b));
-  $('pOut').style.display=b.dataset.t==='out'?'':'none';$('pIn').style.display=b.dataset.t==='in'?'':'none'});
-
-/* toast */
-let tt;function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),1800)}
-
-/* menú programas */
-function lista(){
-  const fs=[...S.files].sort((a,b)=>b.t-a.t);
-  $('lista').innerHTML=fs.map(f=>`<div class="row ${f.id===S.cur?'cur':''}" data-id="${f.id}">
-   <div class="i"><b>${esc(f.name)}</b><small>${f.code.split('\n').length} líneas · ${new Date(f.t).toLocaleDateString('es-ES',{day:'numeric',month:'short'})}</small></div>
-   ${S.files.length>1?'<button class="x" data-del="'+f.id+'">Borrar</button>':''}</div>`).join('');
-}
-const abrir=id=>{$(id).classList.add('on')},cerrar=id=>{$(id).classList.remove('on')};
-$('bMenu').onclick=()=>{lista();abrir('sheet')};
-$('sClose').onclick=$('sbg').onclick=()=>cerrar('sheet');
-$('lista').addEventListener('click',e=>{
-  const d=e.target.closest('[data-del]');
-  if(d){const f=S.files.find(x=>x.id===d.dataset.del);
-    if(confirm('¿Borrar «'+f.name+'»?')){S.files=S.files.filter(x=>x!==f);if(S.cur===f.id)S.cur=S.files[0].id;cargar();lista()}return}
-  const r=e.target.closest('.row');if(r){S.cur=r.dataset.id;cargar();cerrar('sheet')}
-});
-function nuevo(nombre,codigo,stdin){
-  let base=nombre||'programa',n=1,nom;
+function nuevo(nombre,codigo){
   const nombres=new Set(S.files.map(f=>f.name));
-  do{nom=(nombre&&n===1?base:base.replace(/\.c$/,'')+(nombre&&n===1?'':n))+'.c';nom=nom.replace(/\.c\.c$/,'.c');n++}while(nombres.has(nom));
-  const f={id:uid(),name:nom,code:codigo,stdin:stdin||'',t:Date.now()};
-  S.files.push(f);S.cur=f.id;cargar();return f;
+  let base=(nombre||'programa').replace(/\.c$/i,''),n=1,nom=base+'.c';
+  while(nombres.has(nom)){n++;nom=base+n+'.c'}
+  const f={id:uid(),name:nom,code:codigo,t:Date.now()};S.files.push(f);S.cur=f.id;cargar();return f;
 }
-$('aNuevo').onclick=()=>{nuevo('programa',`#include <stdio.h>
+const norm=n=>{let x=(n||'').trim().replace(/[\\/:*?"<>|]/g,'_');if(!x)return '';return /\.c$/i.test(x)?x:x+'.c'};
+const nl=s=>s.split('\n').length;
+const fch=t=>new Date(t).toLocaleDateString('es-ES',{day:'numeric',month:'short'})+' '+new Date(t).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+function descargar(nombre,texto,tipo){const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([texto],{type:tipo||'text/plain'}));a.download=nombre;document.body.appendChild(a);a.click();a.remove()}
 
-int main(void) {
-    
-    return 0;
+/* Mis programas (los que estás editando) */
+function vProgramas(){
+  const l=[...S.files].sort((a,b)=>b.t-a.t);
+  dlg('Programas abiertos',l.map(f=>`<div class="it ${f.id===S.cur?'cur':''}" data-id="${f.id}">
+    <div class="i" data-a="abrir"><b>${esc(f.name)}</b><small>${nl(f.code)} líneas · ${fch(f.t)}</small></div>
+    ${S.files.length>1?'<button class="bv" data-a="del">Borrar</button>':''}</div>`).join(''),e=>{
+    const it=e.target.closest('.it');if(!it)return;const a=e.target.closest('[data-a]');if(!a)return;
+    const f=S.files.find(x=>x.id===it.dataset.id);
+    if(a.dataset.a==='abrir'){S.cur=f.id;cargar();cerrarDlg()}
+    if(a.dataset.a==='del'&&confirm('¿Borrar «'+f.name+'»? (los archivos guardados no se tocan)')){
+      S.files=S.files.filter(x=>x!==f);if(S.cur===f.id)S.cur=S.files[0].id;cargar();vProgramas()}
+  });
 }
-`);cerrar('sheet');toast('Programa nuevo')};
-$('aRen').onclick=()=>{const n=prompt('Nombre del programa:',cur().name);
-  if(n&&n.trim()){let x=n.trim();if(!/\.c$/i.test(x))x+='.c';cur().name=x;$('nombre').textContent=x;save();lista()}};
-$('aDup').onclick=()=>{const f=cur();nuevo(f.name.replace(/\.c$/,'')+'_copia',f.code,f.stdin);cerrar('sheet');toast('Duplicado')};
-$('aCopy').onclick=async()=>{try{await navigator.clipboard.writeText(code.value);toast('Código copiado')}catch(e){code.select();toast('Selecciona y copia')}};
-$('aExp').onclick=()=>{const f=cur();const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([f.code],{type:'text/plain'}));a.download=f.name;document.body.appendChild(a);a.click();a.remove();toast('Exportado')};
-$('aImp').onclick=()=>$('file').click();
-$('file').onchange=async e=>{const f=e.target.files[0];if(!f)return;const t=await f.text();
-  nuevo(f.name.replace(/\.[^.]+$/,''),t);cerrar('sheet');toast('Importado');e.target.value=''};
-$('aFmt').onclick=()=>{ // sangrado simple por llaves
-  let nivel=0;const out=code.value.split('\n').map(l=>{
-    const t=l.trim();if(!t)return '';
-    const cierra=(t.match(/^\}+/)||[''])[0].length;
-    const n=Math.max(0,nivel-cierra);const r='    '.repeat(n)+t;
-    nivel+=(t.match(/\{/g)||[]).length-(t.match(/\}/g)||[]).length;if(nivel<0)nivel=0;return r}).join('\n');
-  code.value=out;code.dispatchEvent(new Event('input'));cerrar('sheet');toast('Código sangrado')};
-/* ejemplos */
-$('aEj').onclick=()=>{$('ejl').innerHTML=Object.keys(EJ).map((k,i)=>`<div class="row" data-k="${esc(k)}"><div class="i"><b>${esc(k)}</b></div></div>`).join('');abrir('sheetEj')};
-$('ejClose').onclick=$('ejbg').onclick=()=>cerrar('sheetEj');
-$('ejl').addEventListener('click',e=>{const r=e.target.closest('.row');if(!r)return;
-  const v=EJ[r.dataset.k];const c=typeof v==='string'?v:v.code,i=typeof v==='string'?'':v.stdin;
-  nuevo(r.dataset.k.replace(/[^\wáéíóúñ ]/gi,'').trim().replace(/\s+/g,'_').toLowerCase(),c,i);
-  cerrar('sheetEj');cerrar('sheet');toast('Ejemplo cargado')});
+/* Guardar y archivos guardados */
+function guardarArchivo(){
+  const f=cur();const n=norm(prompt('Guardar como:',f.name));if(!n)return;
+  const ex=S.saved.find(x=>x.name===n);
+  if(ex){if(!confirm('Ya existe «'+n+'» en guardados. ¿Sobrescribir?'))return;ex.code=f.code;ex.t=Date.now()}
+  else S.saved.push({id:uid(),name:n,code:f.code,t:Date.now()});
+  save();aviso('Guardado: '+n);
+  if($('vDlg').classList.contains('on')&&$('dT').textContent==='Archivos guardados')vGuardados();
+}
+function vGuardados(){
+  const l=[...S.saved].sort((a,b)=>b.t-a.t);
+  dlg('Archivos guardados',(l.length?l.map(f=>`<div class="it" data-id="${f.id}">
+    <div class="i" data-a="open"><b>${esc(f.name)}</b><small>${nl(f.code)} líneas · ${fch(f.t)}</small></div>
+    <button class="bv" data-a="exp">.c</button><button class="bv" data-a="del">X</button></div>`).join('')
+    :'<div class="it"><div class="i"><small>Todavía no hay archivos guardados. Pulsa «Guardar actual».</small></div></div>'),e=>{
+    const b=e.target.closest('[data-a]');if(!b)return;
+    if(b.dataset.a==='nuevoG'){guardarArchivo();return}
+    if(b.dataset.a==='imp'){$('fImp').click();return}
+    if(b.dataset.a==='bak'){descargar('cstudio-copia.json',JSON.stringify({v:2,files:S.files,saved:S.saved}),'application/json');aviso('Copia exportada');return}
+    if(b.dataset.a==='res'){$('fRes').click();return}
+    const it=b.closest('.it');if(!it)return;const f=S.saved.find(x=>x.id===it.dataset.id);if(!f)return;
+    if(b.dataset.a==='open'){nuevo(f.name,f.code);cerrarDlg();aviso('Abierto: '+f.name)}
+    if(b.dataset.a==='exp'){descargar(f.name,f.code);aviso('Exportado')}
+    if(b.dataset.a==='del'&&confirm('¿Borrar «'+f.name+'» de guardados?')){S.saved=S.saved.filter(x=>x!==f);save();vGuardados()}
+  },`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+    <button class="bv" data-a="nuevoG">Guardar actual</button><button class="bv" data-a="imp">Importar .c</button>
+    <button class="bv" data-a="bak">Copia de todo</button><button class="bv" data-a="res">Restaurar copia</button></div>`);
+}
+$('fImp').onchange=async e=>{let n=0;
+  for(const f of e.target.files){const t=await f.text();const nm=norm(f.name.replace(/\.[^.]+$/,''));
+    const ex=S.saved.find(x=>x.name===nm);if(ex){ex.code=t;ex.t=Date.now()}else S.saved.push({id:uid(),name:nm,code:t,t:Date.now()});n++}
+  save();vGuardados();aviso(n+' importado'+(n===1?'':'s'));e.target.value=''};
+$('fRes').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  try{const d=JSON.parse(await f.text());let n=0;
+    for(const x of (d.saved||[]))if(!S.saved.some(y=>y.name===x.name)){S.saved.push({id:uid(),name:x.name,code:x.code,t:x.t||Date.now()});n++}
+    for(const x of (d.files||[]))if(!S.saved.some(y=>y.name===x.name)){S.saved.push({id:uid(),name:x.name,code:x.code,t:x.t||Date.now()});n++}
+    save();vGuardados();aviso(n+' restaurado'+(n===1?'':'s'))}catch(err){aviso('Copia no válida')}
+  e.target.value=''};
+/* Ejemplos */
+function vEjemplos(){
+  dlg('Ejemplos',Object.keys(EJ).map(k=>`<div class="it" data-k="${esc(k)}"><div class="i"><b>${esc(k)}</b></div></div>`).join(''),e=>{
+    const it=e.target.closest('.it');if(!it)return;
+    nuevo(it.dataset.k.replace(/[^\wáéíóúñ ]/gi,'').trim().replace(/\s+/g,'_').toLowerCase(),EJ[it.dataset.k]);cerrarDlg();aviso('Ejemplo cargado')});
+}
+/* Menú */
+function sangrar(){let nivel=0;
+  code.value=code.value.split('\n').map(l=>{const t=l.trim();if(!t)return '';
+    const c=(t.match(/^\}+/)||[''])[0].length,n=Math.max(0,nivel-c);
+    nivel+=(t.match(/\{/g)||[]).length-(t.match(/\}/g)||[]).length;if(nivel<0)nivel=0;return '    '.repeat(n)+t}).join('\n');
+  code.dispatchEvent(new Event('input'))}
+const ACC={
+ nuevo:()=>{nuevo('programa',PLANTILLA);cerrarDlg();aviso('Programa nuevo')},
+ abiertos:vProgramas,ejemplos:vEjemplos,guardados:vGuardados,
+ ren:()=>{const n=norm(prompt('Nombre del programa:',cur().name));if(n){cur().name=n;cargar();cerrarDlg()}},
+ dup:()=>{nuevo(cur().name.replace(/\.c$/,'')+'_copia',cur().code);cerrarDlg();aviso('Duplicado')},
+ copiar:async()=>{try{await navigator.clipboard.writeText(code.value);aviso('Código copiado')}catch(e){aviso('No se pudo copiar')}cerrarDlg()},
+ exp:()=>{descargar(cur().name,cur().code);cerrarDlg();aviso('Exportado')},
+ sang:()=>{sangrar();cerrarDlg();aviso('Código sangrado')},
+ mas:()=>{S.fs=Math.min(22,S.fs+1);aplicarFs();save();aviso('Letra '+S.fs)},
+ menos:()=>{S.fs=Math.max(11,S.fs-1);aplicarFs();save();aviso('Letra '+S.fs)}
+};
+function vMenu(){
+  const it=(k,t)=>`<div class="it" data-m="${k}"><div class="i"><b>${t}</b></div></div>`;
+  dlg('Menú','<div class="menu"><h4>Programa</h4>'+it('nuevo','Nuevo programa')+it('abiertos','Programas abiertos')+it('ejemplos','Ejemplos')
+   +it('ren','Cambiar nombre')+it('dup','Duplicar')+'<h4>Archivos</h4>'+it('guardados','Archivos guardados')+it('exp','Exportar como .c')+it('copiar','Copiar código')
+   +'<h4>Editor</h4>'+it('sang','Sangrar el código')+it('mas','Letra más grande')+it('menos','Letra más pequeña')+'</div>',e=>{
+    const i=e.target.closest('[data-m]');if(i)ACC[i.dataset.m]()});
+}
+$('bMenu').onclick=vMenu;$('bSave').onclick=guardarArchivo;$('bGua').onclick=vGuardados;
 
-/* resultado */
-function estado(tipo,txt,ms){const s=$('st');s.className='status '+tipo;$('stt').textContent=txt;$('stm').textContent=ms||''}
+/* salida (solo al ejecutar) */
+const salida=$('vSal');
+function estado(c,t,ms){const e=$('est');e.className='est '+c;e.textContent=t;$('ms').textContent=ms||''}
+$('sCerrar').onclick=()=>salida.classList.remove('on');
 function irALinea(n){
+  salida.classList.remove('on');
   const lines=code.value.split('\n');let off=0;for(let i=0;i<n-1&&i<lines.length;i++)off+=lines[i].length+1;
   const lh=parseFloat(getComputedStyle(code).lineHeight);
-  $('ed').scrollTop=Math.max(0,(n-1)*lh-60);code.focus({preventScroll:true});code.setSelectionRange(off,off+(lines[n-1]||'').length);
-  $('ed').scrollIntoView({behavior:'smooth',block:'center'});
-}
-function pintarError(txt){
-  const h=esc(txt).replace(/(?:prog\.c|prog)\.c?:(\d+)(?::(\d+))?/g,(m,l)=>`<a data-l="${l}">línea ${l}</a>`);
-  return h;
+  $('ed').scrollTop=Math.max(0,(n-1)*lh-60);code.setSelectionRange(off,off+(lines[n-1]||'').length);
 }
 $('out').addEventListener('click',e=>{const a=e.target.closest('a[data-l]');if(a)irALinea(+a.dataset.l)});
-
 let compilador=null;
-async function elegirCompilador(){
+async function elegir(){
   if(compilador)return compilador;
   try{const l=await (await fetch('https://wandbox.org/api/list.json')).json();
     const c=l.filter(x=>x.language==='C'&&/^gcc-/.test(x.name));
@@ -493,83 +453,37 @@ async function elegirCompilador(){
 }
 const run=$('run');
 run.onclick=async()=>{
-  run.disabled=true;run.textContent='Compilando…';malas.clear();render();
-  [...$('tabs').children][0].click();
-  estado('run','Compilando y ejecutando…');$('out').innerHTML='<span class="m">…</span>';
+  if(run.disabled)return;
+  run.disabled=true;malas.clear();render();
+  salida.classList.add('on');estado('ru','Compilando…','');$('out').innerHTML='';
   const t0=performance.now();
   try{
-    const comp=await elegirCompilador();
+    const comp=await elegir();
     const ctrl=new AbortController(),to=setTimeout(()=>ctrl.abort(),30000);
     const r=await fetch('https://wandbox.org/api/compile.json',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
-      body:JSON.stringify({code:code.value,compiler:comp,stdin:$('stdin').value,save:false,'compiler-option-raw':'-Wall\n-lm'})});
+      body:JSON.stringify({code:code.value,compiler:comp,stdin:'',save:false,'compiler-option-raw':'-Wall\n-lm'})});
     clearTimeout(to);
     if(!r.ok)throw new Error('El servidor respondió '+r.status);
-    const d=await r.json();const ms=((performance.now()-t0)/1000).toFixed(1)+' s';
+    const d=await r.json(),ms=((performance.now()-t0)/1000).toFixed(1)+' s';
     const cerr=(d.compiler_error||'').trim(),st=String(d.status??''),out=d.program_output||'';
     let h='';
-    if(cerr){h+='<span class="e">'+pintarError(cerr)+'</span>\n\n';
+    if(cerr){h+='<span class="e">'+esc(cerr).replace(/prog\.c:(\d+)(?::\d+)?/g,(m,l)=>`<a data-l="${l}">línea ${l}</a>`)+'</span>\n\n';
       for(const m of cerr.matchAll(/prog\.c:(\d+):\d+: (?:error|fatal error)/g))malas.add(+m[1]);render()}
     if(out)h+=esc(out);
     if(d.program_error)h+='<span class="e">'+esc(d.program_error)+'</span>';
-    if(d.signal){estado('err','El programa se interrumpió ('+d.signal+')',ms)}
-    else if(st==='0'){estado('ok','Terminó correctamente',ms)}
-    else if(cerr&&!out){estado('err','Error de compilación',ms)}
-    else{estado('err','Terminó con código '+st,ms)}
-    $('out').innerHTML=h||'<span class="m">(El programa no escribió nada)</span>';
+    if(d.signal)estado('er','Interrumpido ('+d.signal+')',ms);
+    else if(st==='0')estado('ok','Terminó bien (código 0)',ms);
+    else if(cerr&&!out)estado('er','Error de compilación',ms);
+    else estado('er','Terminó con código '+st,ms);
+    $('out').innerHTML=h||'<span style="color:#808080">(el programa no escribió nada)</span>';
   }catch(e){
-    estado('err','Sin conexión');
-    $('out').innerHTML='<span class="e">'+(e.name==='AbortError'?'Tardó demasiado. ¿Hay un bucle infinito?':'No se pudo conectar con el compilador. Comprueba tu internet.\n('+esc(e.message)+')')+'</span>';
+    estado('er','Sin conexión','');
+    $('out').innerHTML='<span class="e">'+(e.name==='AbortError'?'Tardó demasiado. ¿Bucle infinito?':'No se pudo conectar con el compilador.\nComprueba tu internet.\n('+esc(e.message)+')')+'</span>';
   }
-  run.disabled=false;run.textContent='▶ Compilar y ejecutar';
-  $('pOut').scrollIntoView({behavior:'smooth',block:'nearest'});
+  run.disabled=false;
 };
 
-/* archivos guardados */
-const normNombre=n=>{let x=(n||'').trim().replace(/[\\/:*?"<>|]/g,'_');if(!x)return '';return /\.c$/i.test(x)?x:x+'.c'};
-function guardarArchivo(){
-  const f=cur();const n=normNombre(prompt('Guardar como:',f.name));if(!n)return;
-  const ex=S.saved.find(x=>x.name===n);
-  if(ex){if(!confirm('Ya hay un archivo guardado llamado «'+n+'». ¿Sobrescribirlo?'))return;
-    ex.code=f.code;ex.stdin=f.stdin||'';ex.t=Date.now()}
-  else S.saved.push({id:uid(),name:n,code:f.code,stdin:f.stdin||'',t:Date.now()});
-  save();toast('Guardado «'+n+'»');if($('sheetG').classList.contains('on'))listaG();
-}
-function listaG(){
-  const l=[...S.saved].sort((a,b)=>b.t-a.t);
-  $('glista').innerHTML=l.length?l.map(f=>`<div class="row" data-id="${f.id}">
-    <div class="i"><b>${esc(f.name)}</b><small>${f.code.split('\n').length} líneas · ${new Date(f.t).toLocaleDateString('es-ES',{day:'numeric',month:'short'})} ${new Date(f.t).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</small></div>
-    <button class="mini" data-a="open">Abrir</button><button class="mini" data-a="exp">⬇︎</button><button class="mini d" data-a="del">✕</button></div>`).join('')
-   :'<div class="row"><div class="i"><small>Todavía no has guardado ningún archivo. Pulsa «Guardar el actual».</small></div></div>';
-}
-function descargar(nombre,texto,tipo){const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([texto],{type:tipo||'text/plain'}));a.download=nombre;document.body.appendChild(a);a.click();a.remove()}
-$('bSave').onclick=guardarArchivo;$('gGuardar').onclick=guardarArchivo;
-$('aGua').onclick=()=>{listaG();abrir('sheetG')};
-$('gClose').onclick=$('gbg').onclick=()=>cerrar('sheetG');
-$('glista').addEventListener('click',e=>{
-  const b=e.target.closest('button[data-a]');if(!b)return;
-  const f=S.saved.find(x=>x.id===b.closest('.row').dataset.id);if(!f)return;
-  if(b.dataset.a==='open'){nuevo(f.name.replace(/\.c$/,''),f.code,f.stdin);cerrar('sheetG');cerrar('sheet');toast('Abierto «'+f.name+'»')}
-  if(b.dataset.a==='exp'){descargar(f.name,f.code);toast('Exportado')}
-  if(b.dataset.a==='del'&&confirm('¿Borrar «'+f.name+'» de los guardados?')){S.saved=S.saved.filter(x=>x!==f);save();listaG()}
-});
-$('gImp').onclick=()=>$('fileG').click();
-$('fileG').onchange=async e=>{let n=0;
-  for(const f of e.target.files){const t=await f.text();const nm=normNombre(f.name.replace(/\.[^.]+$/,''));
-    const ex=S.saved.find(x=>x.name===nm);
-    if(ex){ex.code=t;ex.t=Date.now()}else S.saved.push({id:uid(),name:nm,code:t,stdin:'',t:Date.now()});n++}
-  save();listaG();toast(n+' archivo'+(n===1?'':'s')+' importado'+(n===1?'':'s'));e.target.value=''};
-$('gBak').onclick=()=>{descargar('cstudio-copia.json',JSON.stringify({v:2,files:S.files,saved:S.saved}),'application/json');toast('Copia exportada')};
-$('gRes').onclick=()=>$('fileB').click();
-$('fileB').onchange=async e=>{const f=e.target.files[0];if(!f)return;
-  try{const d=JSON.parse(await f.text());let n=0;
-    for(const x of (d.saved||[])){if(!S.saved.some(y=>y.name===x.name)){S.saved.push({...x,id:uid()});n++}}
-    for(const x of (d.files||[])){if(!S.saved.some(y=>y.name===x.name)){S.saved.push({id:uid(),name:x.name,code:x.code,stdin:x.stdin||'',t:x.t||Date.now()});n++}}
-    save();listaG();toast(n+' archivo'+(n===1?'':'s')+' restaurado'+(n===1?'':'s'))}
-  catch(err){toast('Ese archivo no es una copia válida')}
-  e.target.value=''};
-
-aplicarTema();document.documentElement.style.setProperty('--fs',S.fs+'px');cargar();
+document.documentElement.style.setProperty('--fs',S.fs+'px');cargar();
 </script>
 </body>
 </html>
