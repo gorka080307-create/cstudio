@@ -6,88 +6,113 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="C Studio">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#202020">
 <title>C Studio</title>
 <style>
-:root{--gris:#c0c0c0;--sombra:#808080;--osc:#404040;--azul:#0000a8;--azul2:#000070;
-  --cian:#55ffff;--amar:#ffff55;--verde:#55ff55;--rojo:#ff5555;--mag:#ff77ff;--fs:14px;
-  --mono:"Menlo","SF Mono","Courier New",monospace}
+:root{
+  --bg:#202020;--surf:#2b2b2b;--surf2:#323232;--hov:#3a3a3a;--line:#404040;--tx:#ffffff;--mut:#a6a6a6;
+  --acc:#60cdff;--onacc:#000;--ok:#6ccb5f;--er:#ff99a4;--wr:#fce100;
+  --k:#569cd6;--k2:#c586c0;--t:#4ec9b0;--s:#ce9178;--n:#b5cea8;--c:#6a9955;--f:#dcdcaa;--p:#c586c0;
+  --term:#0c0c0c;--termtx:#cccccc;--sh:0 8px 24px rgba(0,0,0,.45);--fs:14px;
+  --ui:"Segoe UI Variable","Segoe UI",system-ui,-apple-system,"SF Pro Text",sans-serif;
+  --mono:"Cascadia Code","SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:light){:root{
+  --bg:#f3f3f3;--surf:#ffffff;--surf2:#fbfbfb;--hov:#eaeaea;--line:#dcdcdc;--tx:#1b1b1b;--mut:#616161;
+  --acc:#0067c0;--onacc:#fff;--ok:#0f7b0f;--er:#c42b1c;--wr:#9d5d00;
+  --k:#0000ff;--k2:#af00db;--t:#267f99;--s:#a31515;--n:#098658;--c:#008000;--f:#795e26;--p:#af00db;--sh:0 8px 24px rgba(0,0,0,.18)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:#000;color:#fff;font-family:var(--mono);-webkit-text-size-adjust:100%}
-#app{max-width:860px;margin:auto;min-height:100%;display:flex;flex-direction:column;
-  padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 118px)}
-button{font:inherit;color:#000;cursor:pointer;border-radius:0}
-.bv{background:var(--gris);border:2px solid;border-color:#fff var(--osc) var(--osc) #fff;padding:9px 10px;font-weight:700;font-size:14px;color:#000}
-.bv:active{border-color:var(--osc) #fff #fff var(--osc);padding:10px 9px 8px 11px}
-.bv:disabled{color:var(--sombra)}
-/* barra de título y reloj */
-.titulo{background:var(--gris);color:#000;display:flex;justify-content:space-between;align-items:center;padding:5px 10px;
-  border-bottom:2px solid var(--sombra);font-weight:700;font-size:14px}
-.reloj{background:#000;border-bottom:2px solid var(--sombra);padding:7px 10px;font-size:13px;line-height:1.55}
-.reloj .h{color:var(--verde);font-size:20px;letter-spacing:1px;font-weight:700}
-.reloj .f{color:var(--gris);margin-left:8px;text-transform:uppercase;font-size:12px}
-.reloj .v{color:var(--amar);display:block}
-/* editor */
-.frame{position:relative;margin:20px 8px 0;border:4px double #fff;background:var(--azul)}
-.frame .tit{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--azul);color:#fff;padding:0 8px;font-weight:700;font-size:13px;white-space:nowrap}
-.ed{position:relative;display:flex;max-height:50vh;min-height:260px;overflow:auto;overscroll-behavior:contain}
-.gut{position:sticky;left:0;z-index:2;flex:none;padding:12px 8px 12px 8px;text-align:right;color:#8a8aff;background:var(--azul2);
-  font:var(--fs)/1.5 var(--mono);white-space:pre;user-select:none;border-right:1px solid #5555cc}
-.gut .bad{color:#fff;background:#aa0000}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font-family:var(--ui);-webkit-text-size-adjust:100%}
+#app{max-width:900px;margin:auto;min-height:100%;padding:calc(env(safe-area-inset-top) + 8px) 12px calc(env(safe-area-inset-bottom) + 92px)}
+button{font:inherit;color:inherit;cursor:pointer}
+.bv{background:var(--surf2);color:var(--tx);border:1px solid var(--line);border-radius:5px;padding:8px 12px;font-size:14px;font-weight:500;
+  box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.bv:hover{background:var(--hov)}.bv:active{opacity:.75}
+.bv:disabled{opacity:.5}
+.bv.pri{background:var(--acc);color:var(--onacc);border-color:transparent;font-weight:600}
+.bv.pri:hover{filter:brightness(1.06)}
+.bv svg{width:16px;height:16px;vertical-align:-3px;margin-right:6px;fill:currentColor}
+/* cabecera */
+.cab{display:flex;align-items:center;gap:10px;padding:4px 4px 10px}
+.logo{width:28px;height:28px;border-radius:6px;background:var(--acc);color:var(--onacc);display:grid;place-items:center;font:700 15px var(--mono)}
+.cab b{font-size:15px;font-weight:600}
+.cab .sp{flex:1}
+.cab .h{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.3px}
+.sub{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:0 4px 10px;color:var(--mut);font-size:13px}
+
+.pill{background:var(--surf);border:1px solid var(--line);border-radius:5px;padding:4px 9px;font-variant-numeric:tabular-nums;color:var(--tx);font-size:13px}
+.pill i{font-style:normal;color:var(--acc);font-weight:600}
+/* pestaña + editor */
+.pest{display:flex;align-items:flex-end;padding-left:2px}
+.pest div{background:var(--surf);border:1px solid var(--line);border-bottom:0;border-radius:6px 6px 0 0;padding:7px 14px;font-size:13px;display:flex;gap:8px;align-items:center;
+  box-shadow:inset 0 2px 0 var(--acc)}
+.pest span{width:8px;height:8px;border-radius:50%;background:var(--mut);opacity:.0}
+.frame{background:var(--surf);border:1px solid var(--line);border-radius:0 8px 8px 8px;overflow:hidden;box-shadow:var(--sh)}
+.ed{position:relative;display:flex;max-height:52vh;min-height:270px;overflow:auto;overscroll-behavior:contain}
+.gut{position:sticky;left:0;z-index:2;flex:none;padding:12px 10px 12px 12px;text-align:right;color:var(--mut);opacity:.9;background:var(--surf);
+  font:var(--fs)/1.55 var(--mono);white-space:pre;user-select:none}
+.gut .bad{color:var(--er);font-weight:700}
 .stack{position:relative;flex:1;min-width:max-content}
-pre.hl,textarea#code{margin:0;padding:12px 14px;font:var(--fs)/1.5 var(--mono);white-space:pre;tab-size:4}
-pre.hl{pointer-events:none;color:var(--amar);min-height:100%}
+pre.hl,textarea#code{margin:0;padding:12px 14px 12px 6px;font:var(--fs)/1.55 var(--mono);white-space:pre;tab-size:4}
+pre.hl{pointer-events:none;color:var(--tx);min-height:100%}
 textarea#code{position:absolute;inset:0;width:100%;height:100%;border:0;outline:0;resize:none;overflow:hidden;
-  background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:#fff}
-textarea#code::selection{background:rgba(255,255,255,.3);-webkit-text-fill-color:transparent}
-.k{color:#fff;font-weight:700}.t{color:var(--cian)}.s{color:var(--verde)}.n{color:var(--mag)}.c{color:#9a9aff}.p{color:#ffaa55}.f{color:var(--amar)}
-.keys{display:flex;gap:4px;overflow-x:auto;padding:6px;background:var(--gris);border-top:2px solid #fff;scrollbar-width:none}
+  background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:var(--acc)}
+textarea#code::selection{background:color-mix(in srgb,var(--acc) 35%,transparent);-webkit-text-fill-color:transparent}
+.k{color:var(--k)}.t{color:var(--t)}.s{color:var(--s)}.n{color:var(--n)}.c{color:var(--c)}.p{color:var(--p)}.f{color:var(--f)}
+pre.hl .k{color:var(--k)}
+.keys{display:flex;gap:6px;overflow-x:auto;padding:8px;border-top:1px solid var(--line);background:var(--surf2);scrollbar-width:none}
 .keys::-webkit-scrollbar{display:none}
-.keys button{flex:none;min-width:36px;padding:7px 6px;font-size:15px}
-/* barra inferior */
-.barra{position:fixed;left:0;right:0;bottom:0;background:var(--gris);border-top:2px solid #fff;padding:8px 8px calc(env(safe-area-inset-bottom) + 8px)}
-.barra>div{max-width:860px;margin:auto;display:flex;gap:6px}
-.barra .bv{flex:1;padding:13px 4px}
-.barra #run{flex:1.7;background:#00a800;color:#fff;font-size:15px}
-.barra small{display:block;font-size:10px;font-weight:400;opacity:.85}
+.keys button{flex:none;min-width:38px;padding:7px 8px;font:500 15px var(--mono)}
+/* barra de comandos */
+.barra{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(18px) saturate(1.4);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);border-top:1px solid var(--line);padding:10px 12px calc(env(safe-area-inset-bottom) + 10px)}
+.barra>div{max-width:900px;margin:auto;display:flex;gap:8px}
+.barra .bv{flex:1;min-width:0;padding:11px 2px;white-space:nowrap;font-size:12.5px}
+.barra .bv svg{margin-right:3px;width:14px;height:14px}
+.barra #run{flex:1.2;font-size:14px}
 /* ventanas */
-.vel{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.6);padding:calc(env(safe-area-inset-top) + 16px) 10px calc(env(safe-area-inset-bottom) + 14px)}
+.vel{position:fixed;inset:0;z-index:20;display:none;background:rgba(0,0,0,.45);padding:calc(env(safe-area-inset-top) + 16px) 12px calc(env(safe-area-inset-bottom) + 14px)}
 .vel.on{display:flex;flex-direction:column;justify-content:center}
-.win{margin:auto;width:100%;max-width:620px;max-height:100%;display:flex;flex-direction:column;background:var(--gris);color:#000;
-  border:4px double #fff;box-shadow:6px 6px 0 #000}
-.win .bar{background:var(--azul);color:#fff;padding:5px 10px;font-weight:700;display:flex;justify-content:space-between;align-items:center;font-size:14px}
-.win .bar button{background:var(--gris);border:2px solid;border-color:#fff var(--osc) var(--osc) #fff;padding:1px 9px;font-weight:700}
-.win .cu{overflow:auto;padding:10px;flex:1}
-.win .pie{padding:8px 10px;border-top:2px solid var(--sombra);font-size:13px}
-.it{display:flex;align-items:center;gap:8px;padding:10px 8px;border:1px solid var(--sombra);background:#fff;margin-bottom:6px;color:#000}
-.it.cur{background:var(--azul);color:#fff}
-.it .i{flex:1;min-width:0;cursor:pointer}.it b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
-.it small{opacity:.7;font-size:12px}
-.it .bv{padding:5px 8px;font-size:12px}
-.menu .it{cursor:pointer;margin-bottom:4px}
-.menu .it:active{background:var(--azul);color:#fff}
-.menu h4{margin:10px 0 6px;font-size:12px;text-transform:uppercase;color:var(--osc)}
-/* salida */
-.dos{background:#000;border-color:var(--gris)}
-.dos .bar{background:var(--gris);color:#000}
-.dos .cu{background:#000;color:var(--gris);padding:12px;font:14px/1.5 var(--mono);white-space:pre-wrap;word-break:break-word;min-height:150px}
-.dos .e{color:var(--rojo)} .dos a{color:var(--cian);text-decoration:underline}
-.dos .pie{background:#000;color:var(--gris);border-top:1px solid var(--sombra);display:flex;gap:10px;align-items:center;justify-content:space-between}
-.est.ok{color:var(--verde)}.est.er{color:var(--rojo)}.est.ru{color:var(--amar)}
-.aviso{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 90px);transform:translateX(-50%);z-index:40;background:#000;color:#fff;
-  border:2px solid #fff;padding:8px 14px;font-size:13px;display:none}
+.win{margin:auto;width:100%;max-width:560px;max-height:100%;display:flex;flex-direction:column;background:var(--surf);color:var(--tx);
+  border:1px solid var(--line);border-radius:8px;box-shadow:var(--sh);overflow:hidden}
+.win .bar{padding:14px 16px 8px;font-weight:600;font-size:17px;display:flex;justify-content:space-between;align-items:center}
+.win .bar button{background:none;border:0;border-radius:5px;color:var(--mut);font-size:13px;padding:5px 9px}
+.win .bar button:hover{background:var(--hov);color:var(--tx)}
+.win .cu{overflow:auto;padding:6px 12px 12px;flex:1}
+.win .pie{padding:12px;border-top:1px solid var(--line);background:var(--surf2);font-size:13px}
+.it{display:flex;align-items:center;gap:8px;padding:11px 10px;border-radius:5px;margin-bottom:2px;color:var(--tx)}
+.it:hover{background:var(--hov)}
+.it.cur{background:var(--hov);box-shadow:inset 3px 0 0 var(--acc)}
+.it .i{flex:1;min-width:0;cursor:pointer}.it b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+.it small{color:var(--mut);font-size:12px}
+.it .bv{padding:5px 9px;font-size:12px}
+.menu .it{cursor:pointer}
+.menu h4{margin:12px 8px 4px;font-size:12px;font-weight:600;color:var(--mut)}
+/* salida: terminal */
+.dos{background:var(--term);border-color:var(--line)}
+.dos .bar{color:#fff;padding:12px 16px 6px}
+.dos .bar button{color:#bbb}
+.dos .cu{background:var(--term);color:var(--termtx);padding:6px 16px 14px;font:14px/1.55 var(--mono);white-space:pre-wrap;word-break:break-word;min-height:150px}
+.dos .e{color:#f1707b}.dos a{color:#60cdff;text-decoration:underline;text-underline-offset:3px}
+.dos .pie{background:#171717;color:#bbb;border-top:1px solid #2c2c2c;display:flex;gap:10px;justify-content:space-between;align-items:center}
+.est{display:flex;align-items:center;gap:8px;font-weight:600}
+.est::before{content:"";width:9px;height:9px;border-radius:50%;background:#888}
+.est.ok{color:#6ccb5f}.est.ok::before{background:#6ccb5f}
+.est.er{color:#ff99a4}.est.er::before{background:#ff99a4}
+.est.ru{color:#fce100}.est.ru::before{background:#fce100}
+.aviso{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 84px);transform:translateX(-50%);z-index:40;background:var(--surf2);color:var(--tx);
+  border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:14px;box-shadow:var(--sh);display:none}
 .aviso.on{display:block}
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="titulo"><span>C STUDIO</span><span id="nombre">programa1.c</span></div>
-  <div class="reloj">
-    <span class="h" id="hora">--:--:--</span><span class="f" id="fecha"></span>
-    <span class="v" id="cuenta"></span>
+  <div class="cab">
+    <div class="logo">C</div><b>C Studio</b><span class="sp"></span>
+    <span class="h" id="hora">--:--:--</span>
   </div>
+  <div class="sub"><span id="fecha"></span><span class="pill" id="cuenta"></span></div>
+  <div class="pest"><div><b id="nombre" style="font-weight:500">programa1.c</b></div></div>
   <div class="frame">
-    <div class="tit" id="tit">programa1.c</div>
     <div class="ed" id="ed">
       <div class="gut" id="gut">1</div>
       <div class="stack">
@@ -100,10 +125,10 @@ textarea#code::selection{background:rgba(255,255,255,.3);-webkit-text-fill-color
 </div>
 
 <div class="barra"><div>
-  <button class="bv" id="bMenu">Menú</button>
-  <button class="bv" id="bSave">Guardar</button>
-  <button class="bv" id="bGua">Guardados</button>
-  <button class="bv" id="run">Ejecutar<small>compilar y correr</small></button>
+  <button class="bv" id="bMenu"><svg viewBox="0 0 16 16"><path d="M2 3.5h12v1.4H2zm0 3.8h12v1.4H2zm0 3.8h12v1.4H2z"/></svg>Menú</button>
+  <button class="bv" id="bSave"><svg viewBox="0 0 16 16"><path d="M3 1.5h8.6L14.5 4.4V13a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5zm1 1.4v3h6v-3zm0 6v4.6h8V8.9z"/></svg>Guardar</button>
+  <button class="bv" id="bGua"><svg viewBox="0 0 16 16"><path d="M1.5 3A1.5 1.5 0 0 1 3 1.5h3.2l1.5 1.7H13A1.5 1.5 0 0 1 14.5 4.7V12A1.5 1.5 0 0 1 13 13.5H3A1.5 1.5 0 0 1 1.5 12z"/></svg>Guardados</button>
+  <button class="bv pri" id="run"><svg viewBox="0 0 16 16"><path d="M4 2.2v11.6a.6.6 0 0 0 .9.5l9-5.8a.6.6 0 0 0 0-1L4.9 1.7a.6.6 0 0 0-.9.5z"/></svg>Ejecutar</button>
 </div></div>
 
 <!-- salida: solo aparece al ejecutar -->
@@ -264,14 +289,14 @@ const p2=n=>String(n).padStart(2,'0');
 function tic(){
   const n=new Date();
   $('hora').textContent=p2(n.getHours())+':'+p2(n.getMinutes())+':'+p2(n.getSeconds());
-  $('fecha').textContent=n.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).replace('.','');
+  const fe=n.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});$('fecha').textContent=fe.charAt(0).toUpperCase()+fe.slice(1);
   const dif=(5-n.getDay()+7)%7;
-  if(dif===0){$('cuenta').textContent='¡HOY ES VIERNES!';return}
+  if(dif===0){$('cuenta').innerHTML='<i>¡Hoy es viernes!</i>';return}
   const objetivo=new Date(n.getFullYear(),n.getMonth(),n.getDate()+dif,0,0,0);
   const ms=objetivo-n,d=Math.floor(ms/864e5),r=ms-d*864e5;
   const h=Math.floor(r/36e5),m=Math.floor(r%36e5/6e4),s=Math.floor(r%6e4/1e3);
   const dia=objetivo.toLocaleDateString('es-ES',{day:'numeric',month:'short'}).replace('.','');
-  $('cuenta').textContent='VIERNES '+dia+' · faltan '+d+(d===1?' día ':' días ')+p2(h)+':'+p2(m)+':'+p2(s);
+  $('cuenta').innerHTML='Viernes '+dia+' · faltan <i>'+d+(d===1?' día':' días')+'</i> '+p2(h)+':'+p2(m)+':'+p2(s);
 }
 tic();setInterval(tic,1000);
 
@@ -319,7 +344,7 @@ $('keys').innerHTML=TECLAS.map((k,i)=>`<button class="bv" data-i="${i}">${k===' 
 $('keys').addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();ins(TECLAS[b.dataset.i])});
 
 function cargar(){const f=cur();S.cur=f.id;code.value=f.code;
-  $('nombre').textContent=f.name;$('tit').textContent=f.name;malas.clear();render();save()}
+  $('nombre').textContent=f.name;malas.clear();render();save()}
 function aplicarFs(){document.documentElement.style.setProperty('--fs',S.fs+'px');render()}
 
 let at;function aviso(t){const e=$('aviso');e.textContent=t;e.classList.add('on');clearTimeout(at);at=setTimeout(()=>e.classList.remove('on'),1800)}
@@ -386,7 +411,7 @@ function vGuardados(){
     if(b.dataset.a==='exp'){descargar(f.name,f.code);aviso('Exportado')}
     if(b.dataset.a==='del'&&confirm('¿Borrar «'+f.name+'» de guardados?')){S.saved=S.saved.filter(x=>x!==f);save();vGuardados()}
   },`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-    <button class="bv" data-a="nuevoG">Guardar actual</button><button class="bv" data-a="imp">Importar .c</button>
+    <button class="bv pri" data-a="nuevoG">Guardar actual</button><button class="bv" data-a="imp">Importar .c</button>
     <button class="bv" data-a="bak">Copia de todo</button><button class="bv" data-a="res">Restaurar copia</button></div>`);
 }
 $('fImp').onchange=async e=>{let n=0;
@@ -460,8 +485,10 @@ run.onclick=async()=>{
   try{
     const comp=await elegir();
     const ctrl=new AbortController(),to=setTimeout(()=>ctrl.abort(),30000);
-    const r=await fetch('https://wandbox.org/api/compile.json',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
-      body:JSON.stringify({code:code.value,compiler:comp,stdin:'',save:false,'compiler-option-raw':'-Wall\n-lm'})});
+    const pedir=raw=>fetch('https://wandbox.org/api/compile.json',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
+      body:JSON.stringify({code:code.value,compiler:comp,stdin:'',save:false,'compiler-option-raw':raw})});
+    let r=await pedir('-Wall\n-lm');
+    if(!r.ok)r=await pedir('-Wall');
     clearTimeout(to);
     if(!r.ok)throw new Error('El servidor respondió '+r.status);
     const d=await r.json(),ms=((performance.now()-t0)/1000).toFixed(1)+' s';
