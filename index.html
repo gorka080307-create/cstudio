@@ -110,6 +110,8 @@ textarea#stdin{display:block;width:100%;min-height:120px;border:0;outline:0;resi
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 92px);transform:translateX(-50%);z-index:30;
   background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:.25s;pointer-events:none}
 .toast.on{opacity:1}
+.row .mini{padding:7px 9px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:13px;font-weight:600}
+.row .mini.d{color:var(--err)}
 .row2{display:flex;gap:8px;margin:12px 0 4px}
 </style>
 </head>
@@ -125,6 +127,7 @@ textarea#stdin{display:block;width:100%;min-height:120px;border:0;outline:0;resi
   <div class="card">
     <div class="filebar">
       <div class="nm" id="nombre">programa.c</div>
+      <button class="chip" id="bSave">💾 Guardar</button>
       <button class="chip" id="bA-">A−</button>
       <button class="chip" id="bA+">A+</button>
     </div>
@@ -162,6 +165,7 @@ textarea#stdin{display:block;width:100%;min-height:120px;border:0;outline:0;resi
     <div class="act">
       <button class="pri" id="aNuevo">＋ Nuevo programa</button>
       <button id="aEj">📚 Ejemplos</button>
+      <button id="aGua">🗂 Archivos guardados</button>
       <button id="aRen">✏️ Renombrar</button>
       <button id="aDup">⧉ Duplicar</button>
       <button id="aExp">⬇︎ Exportar .c</button>
@@ -178,6 +182,22 @@ textarea#stdin{display:block;width:100%;min-height:120px;border:0;outline:0;resi
   <div class="body">
     <h3>Ejemplos <button id="ejClose">Cerrar</button></h3>
     <div id="ejl"></div>
+  </div>
+</div>
+<div class="sheet" id="sheetG">
+  <div class="bg" id="gbg"></div>
+  <div class="body">
+    <h3>Archivos guardados <button id="gClose">Cerrar</button></h3>
+    <p style="margin:0 4px 12px;color:var(--mut);font-size:13px">Copias que guardas tú con 💾. Ábrelas para seguir trabajando, expórtalas como .c o impórtalas desde tus archivos.</p>
+    <div id="glista"></div>
+    <div class="act">
+      <button class="pri" id="gGuardar">💾 Guardar el actual</button>
+      <button id="gImp">⬆︎ Importar .c</button>
+      <button id="gBak">⬇︎ Copia de todo</button>
+      <button id="gRes">♻︎ Restaurar copia</button>
+    </div>
+    <input type="file" id="fileG" accept=".c,.h,.txt,text/plain" multiple hidden>
+    <input type="file" id="fileB" accept=".json,application/json" hidden>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -314,6 +334,7 @@ if(!S||!S.files||!S.files.length){
   const f={id:uid(),name:'programa1.c',code:old||(typeof EJ["Hola mundo"]==='string'?EJ["Hola mundo"]:''),stdin:oldin,t:Date.now()};
   S={files:[f],cur:f.id,theme:'dark',fs:14};
 }
+S.saved=S.saved||[];
 function save(){safe(()=>localStorage.setItem(KEY,JSON.stringify(S)))}
 const cur=()=>S.files.find(f=>f.id===S.cur)||S.files[0];
 
@@ -502,6 +523,51 @@ run.onclick=async()=>{
   run.disabled=false;run.textContent='▶ Compilar y ejecutar';
   $('pOut').scrollIntoView({behavior:'smooth',block:'nearest'});
 };
+
+/* archivos guardados */
+const normNombre=n=>{let x=(n||'').trim().replace(/[\\/:*?"<>|]/g,'_');if(!x)return '';return /\.c$/i.test(x)?x:x+'.c'};
+function guardarArchivo(){
+  const f=cur();const n=normNombre(prompt('Guardar como:',f.name));if(!n)return;
+  const ex=S.saved.find(x=>x.name===n);
+  if(ex){if(!confirm('Ya hay un archivo guardado llamado «'+n+'». ¿Sobrescribirlo?'))return;
+    ex.code=f.code;ex.stdin=f.stdin||'';ex.t=Date.now()}
+  else S.saved.push({id:uid(),name:n,code:f.code,stdin:f.stdin||'',t:Date.now()});
+  save();toast('Guardado «'+n+'»');if($('sheetG').classList.contains('on'))listaG();
+}
+function listaG(){
+  const l=[...S.saved].sort((a,b)=>b.t-a.t);
+  $('glista').innerHTML=l.length?l.map(f=>`<div class="row" data-id="${f.id}">
+    <div class="i"><b>${esc(f.name)}</b><small>${f.code.split('\n').length} líneas · ${new Date(f.t).toLocaleDateString('es-ES',{day:'numeric',month:'short'})} ${new Date(f.t).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</small></div>
+    <button class="mini" data-a="open">Abrir</button><button class="mini" data-a="exp">⬇︎</button><button class="mini d" data-a="del">✕</button></div>`).join('')
+   :'<div class="row"><div class="i"><small>Todavía no has guardado ningún archivo. Pulsa «Guardar el actual».</small></div></div>';
+}
+function descargar(nombre,texto,tipo){const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([texto],{type:tipo||'text/plain'}));a.download=nombre;document.body.appendChild(a);a.click();a.remove()}
+$('bSave').onclick=guardarArchivo;$('gGuardar').onclick=guardarArchivo;
+$('aGua').onclick=()=>{listaG();abrir('sheetG')};
+$('gClose').onclick=$('gbg').onclick=()=>cerrar('sheetG');
+$('glista').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-a]');if(!b)return;
+  const f=S.saved.find(x=>x.id===b.closest('.row').dataset.id);if(!f)return;
+  if(b.dataset.a==='open'){nuevo(f.name.replace(/\.c$/,''),f.code,f.stdin);cerrar('sheetG');cerrar('sheet');toast('Abierto «'+f.name+'»')}
+  if(b.dataset.a==='exp'){descargar(f.name,f.code);toast('Exportado')}
+  if(b.dataset.a==='del'&&confirm('¿Borrar «'+f.name+'» de los guardados?')){S.saved=S.saved.filter(x=>x!==f);save();listaG()}
+});
+$('gImp').onclick=()=>$('fileG').click();
+$('fileG').onchange=async e=>{let n=0;
+  for(const f of e.target.files){const t=await f.text();const nm=normNombre(f.name.replace(/\.[^.]+$/,''));
+    const ex=S.saved.find(x=>x.name===nm);
+    if(ex){ex.code=t;ex.t=Date.now()}else S.saved.push({id:uid(),name:nm,code:t,stdin:'',t:Date.now()});n++}
+  save();listaG();toast(n+' archivo'+(n===1?'':'s')+' importado'+(n===1?'':'s'));e.target.value=''};
+$('gBak').onclick=()=>{descargar('cstudio-copia.json',JSON.stringify({v:2,files:S.files,saved:S.saved}),'application/json');toast('Copia exportada')};
+$('gRes').onclick=()=>$('fileB').click();
+$('fileB').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  try{const d=JSON.parse(await f.text());let n=0;
+    for(const x of (d.saved||[])){if(!S.saved.some(y=>y.name===x.name)){S.saved.push({...x,id:uid()});n++}}
+    for(const x of (d.files||[])){if(!S.saved.some(y=>y.name===x.name)){S.saved.push({id:uid(),name:x.name,code:x.code,stdin:x.stdin||'',t:x.t||Date.now()});n++}}
+    save();listaG();toast(n+' archivo'+(n===1?'':'s')+' restaurado'+(n===1?'':'s'))}
+  catch(err){toast('Ese archivo no es una copia válida')}
+  e.target.value=''};
 
 aplicarTema();document.documentElement.style.setProperty('--fs',S.fs+'px');cargar();
 </script>
