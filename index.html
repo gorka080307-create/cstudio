@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="C Studio">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1720">
+<title>C Studio</title>
+<style>
+:root{--bg:#0f1720;--panel:#16212d;--line:#243446;--tx:#e6edf3;--mut:#8aa0b4;--ok:#3fb950;--err:#ff6b6b;--acc:#4da3ff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) 16px calc(16px + env(safe-area-inset-bottom));max-width:900px;margin:auto}
+header{display:flex;align-items:center;gap:10px;padding:12px 0}
+h1{font-size:20px;margin:0;flex:1}
+h1 span{color:var(--acc)}
+select,button{font:inherit;color:var(--tx);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+button.run{background:var(--ok);color:#04130a;font-weight:700;border:0;width:100%;padding:14px;font-size:17px;margin:12px 0}
+button.run:disabled{opacity:.6}
+label{display:block;font-size:12px;color:var(--mut);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+textarea{width:100%;background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:12px;
+ font:14px/1.5 ui-monospace,Menlo,monospace;resize:vertical;tab-size:4;white-space:pre;overflow:auto}
+#code{min-height:46vh}
+#stdin{min-height:60px}
+pre{margin:0;background:#0a1118;border:1px solid var(--line);border-radius:12px;padding:12px;font:14px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-word;min-height:90px}
+.err{color:var(--err)} .ok{color:var(--ok)} .mut{color:var(--mut)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+small{color:var(--mut)}
+</style>
+</head>
+<body>
+<header>
+  <h1><span>C</span> Studio</h1>
+  <select id="ej" aria-label="Ejemplos"></select>
+</header>
+
+<label for="code">Código (C)</label>
+<textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+<div class="bar">
+  <button id="tab" type="button">⇥ Tabulador</button>
+  <button id="borrar" type="button">Borrar</button>
+</div>
+
+<label for="stdin">Entrada del programa (para scanf, una línea por dato)</label>
+<textarea id="stdin" spellcheck="false" placeholder="Ejemplo: 5"></textarea>
+
+<button class="run" id="run">▶ Compilar y ejecutar</button>
+
+<label>Resultado</label>
+<pre id="out" class="mut">Pulsa «Compilar y ejecutar».</pre>
+<p><small id="info">Compilador: gcc real en línea (necesita internet). Tu código se guarda solo en este dispositivo.</small></p>
+
+<script>
+const EJ={
+"Hola mundo":`#include <stdio.h>
+
+int main(void) {
+    printf("Hola, mundo!\\n");
+    return 0;
+}
+`,
+"Suma de dos números (scanf)":`#include <stdio.h>
+
+int main(void) {
+    int a, b;
+    printf("Escribe dos números: ");
+    scanf("%d %d", &a, &b);
+    printf("La suma es %d\\n", a + b);
+    return 0;
+}
+`,
+"Bucle for: tabla del 5":`#include <stdio.h>
+
+int main(void) {
+    for (int i = 1; i <= 10; i++) {
+        printf("5 x %d = %d\\n", i, 5 * i);
+    }
+    return 0;
+}
+`,
+"Array: media y máximo":`#include <stdio.h>
+
+int main(void) {
+    int v[5] = {4, 8, 15, 16, 23};
+    int suma = 0, max = v[0];
+    for (int i = 0; i < 5; i++) {
+        suma += v[i];
+        if (v[i] > max) max = v[i];
+    }
+    printf("Media: %.2f\\n", suma / 5.0);
+    printf("Máximo: %d\\n", max);
+    return 0;
+}
+`,
+"Función: factorial":`#include <stdio.h>
+
+long factorial(int n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+int main(void) {
+    for (int i = 0; i <= 10; i++)
+        printf("%d! = %ld\\n", i, factorial(i));
+    return 0;
+}
+`,
+"Cadenas y punteros":`#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char s[] = "programacion";
+    int n = strlen(s);
+    printf("Longitud: %d\\n", n);
+    for (char *p = s + n - 1; p >= s; p--) putchar(*p);
+    putchar('\\n');
+    return 0;
+}
+`,
+"Con un error (para practicar)":`#include <stdio.h>
+
+int main(void) {
+    int x = 5
+    printf("%d\\n", x);
+    return 0;
+}
+`};
+const $=id=>document.getElementById(id);
+const code=$('code'), out=$('out'), sel=$('ej'), run=$('run');
+const safe=(f)=>{try{return f()}catch(e){return null}};
+
+sel.innerHTML='<option value="">Ejemplos…</option>'+Object.keys(EJ).map(k=>`<option>${k}</option>`).join('');
+sel.onchange=()=>{ if(sel.value){code.value=EJ[sel.value]; guardar(); sel.value='';} };
+code.value=safe(()=>localStorage.getItem('cstudio.code'))||EJ["Hola mundo"];
+$('stdin').value=safe(()=>localStorage.getItem('cstudio.stdin'))||'';
+function guardar(){safe(()=>{localStorage.setItem('cstudio.code',code.value);localStorage.setItem('cstudio.stdin',$('stdin').value)})}
+code.oninput=guardar; $('stdin').oninput=guardar;
+
+function insertar(t){const a=code.selectionStart,b=code.selectionEnd;code.setRangeText(t,a,b,'end');guardar();code.focus()}
+$('tab').onclick=()=>insertar('    ');
+code.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();insertar('    ')}});
+$('borrar').onclick=()=>{if(confirm('¿Borrar todo el código?')){code.value='';guardar()}};
+
+function mostrar(partes){out.className='';out.innerHTML=partes.map(([c,t])=>`<span class="${c}"></span>`).join('');
+  [...out.children].forEach((s,i)=>s.textContent=partes[i][1])}
+
+let compilador=null;
+async function elegirCompilador(){
+  if(compilador) return compilador;
+  try{
+    const r=await fetch('https://wandbox.org/api/list.json');
+    const l=await r.json();
+    const c=l.filter(x=>x.language==='C'&&/^gcc-/.test(x.name));
+    compilador=(c.find(x=>x.name==='gcc-head-c')||c[0]||{}).name||'gcc-head-c';
+  }catch(e){compilador='gcc-head-c'}
+  return compilador;
+}
+
+run.onclick=async()=>{
+  run.disabled=true; run.textContent='Compilando…';
+  mostrar([['mut','Compilando y ejecutando…']]);
+  try{
+    const comp=await elegirCompilador();
+    const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),30000);
+    const r=await fetch('https://wandbox.org/api/compile.json',{
+      method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
+      body:JSON.stringify({code:code.value,compiler:comp,stdin:$('stdin').value,save:false,
+        'compiler-option-raw':'-Wall\n-lm'})
+    });
+    clearTimeout(to);
+    if(!r.ok) throw new Error('El servidor respondió '+r.status);
+    const d=await r.json();
+    const p=[];
+    const cerr=d.compiler_error||'';
+    if(cerr) p.push([d.program_output!==undefined&&d.status==='0'?'mut':'err',cerr.trim()+'\n\n']);
+    if(d.program_output!==undefined && d.program_output!=='') p.push(['',d.program_output]);
+    if(d.program_error) p.push(['err',d.program_error]);
+    const st=String(d.status??'');
+    if(d.signal) p.push(['err','\n[El programa terminó por la señal '+d.signal+']']);
+    else if(st==='0') p.push(['ok','\n[Terminó correctamente · código 0]']);
+    else if(!cerr) p.push(['err','\n[Terminó con código '+st+']']);
+    else p.push(['err','[No se pudo compilar]']);
+    mostrar(p);
+  }catch(e){
+    mostrar([['err',e.name==='AbortError'?'Tardó demasiado. Prueba otra vez (¿bucle infinito?).':'No se pudo conectar con el compilador. Comprueba tu internet.\n('+e.message+')']]);
+  }
+  run.disabled=false; run.textContent='▶ Compilar y ejecutar';
+};
+</script>
+</body>
+</html>
